@@ -4,11 +4,55 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Requests\PayrollRequest;
 use App\Models\Payroll;
 
 class PayrollController extends Controller
 {
     use AuthorizesRequests;
+
+    public function store(PayrollRequest $request){
+        try {
+            $validated = $request->validated();
+            $this->authorize('create', Payroll::class);
+
+            $payroll = Payroll::create($validated);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Payrol data created successfully.',
+                'data' => $payroll
+            ]);
+            
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(PayrollRequest $request, $id){
+        try {
+            $payroll = Payroll::findOrFail($id);
+            $validated = $request->validated();
+            $this->authorize('update', $payroll);
+
+            $payroll->update($validated);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Payrol data updated successfully.',
+                'data' => $payroll
+            ]);
+            
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Display a listing of payroll records.

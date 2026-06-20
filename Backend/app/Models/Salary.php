@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Employee;
-use App\Models\Payroll;
 
 class Salary extends Model
 {
@@ -19,8 +18,5 @@ class Salary extends Model
 
     public function employee(){
         return $this->belongsTo(Employee::class);
-    }
-    public function payroll(){
-        return $this->hasOne(Payroll::class);
     }
 }

@@ -51,7 +51,6 @@ class SalaryController extends Controller
 
             $salary = Salary::create($validated);
 
-
             // Load employee relationship
             $salary->load('employee');
 

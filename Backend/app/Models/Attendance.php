@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Employee;
+use App\Model\Employee;
 
-class Payroll extends Model
+class Attendance extends Model
 {
-    protected $table = 'payroll';
+    protected $table = 'attendance';
     protected $fillable = [
         'employee_id',
-        'basic_salary',
-        'allowance',
-        'deductions',
-        'net_salary',
-        'payroll_date'
+        'employee_name',
+        'date',
+        'time_in',
+        'time_out',
+        'attendance_status',
     ];
     public function employee(){
         return $this->belongsTo(Employee::class);
