@@ -20,8 +20,10 @@ Route::middleware(['admin', 'auth:sanctum', 'throttle:60,1'])
         //  Employees management
         Route::apiResource('employees', EmployeeController::class);
 
-        // Salary mangement
-        Route::apiResource('salarys', SalaryController::class);
+        // Salary management - all use 'salaries' (plural)
+        Route::apiResource('salaries', SalaryController::class);
+        Route::get('/salaries/employee/{employeeId}', [SalaryController::class, 'getByEmployee']);
+        Route::get('/salaries/summary', [SalaryController::class, 'summary']);
 
         // attenadance mangement
         Route::apiResource('attenadance', EmployeeController::class);

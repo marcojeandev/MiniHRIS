@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Salary;
+use App\Models\Payroll;
 
 class Employee extends Model
 {
@@ -17,5 +19,10 @@ class Employee extends Model
         'date_hired',
         'employee_status'
     ];
-    
+    public function salary(){
+        return $this->hasOne(Salary::class);
+    } 
+    public function payroll(){
+        return $this->hasOne(Payroll::class);
+    } 
 }

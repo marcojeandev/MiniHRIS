@@ -4,23 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Employee;
-use App\Models\Payroll;
+use App\Models\Salary;
 
-class Salary extends Model
+class Payroll extends Model
 {
-    protected $table = 'salary';
+    protected $table = 'payroll';
     protected $fillable = [
         'employee_id',
-        'basic_salary',
-        'allowance',
-        'deductions',
-        'net_salary',
+        'salary_id',
+        'payroll_date',
     ];
-
     public function employee(){
         return $this->belongsTo(Employee::class);
     }
-    public function payroll(){
-        return $this->hasOne(Payroll::class);
+    public function salary(){
+        return $this->belongsTo(Salary::class);
     }
 }
