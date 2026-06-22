@@ -1,31 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
-    // Mock login — replace with your actual API call
     try {
-      // Simulate API request
-      await new Promise(resolve => setTimeout(resolve, 1000))
-
-      if (email === 'admin@test.com' && password === 'admin123') {
-        localStorage.setItem('token', 'mock-token-123')
-        toast.success('Login successful!')
-        navigate('/dashboard')
-      } else {
-        toast.error('Invalid email or password')
-      }
+      await login(email, password)
+      navigate('/dashboard')
     } catch (error) {
-      toast.error('Something went wrong')
+      // Error already handled in AuthContext
     } finally {
       setLoading(false)
     }
