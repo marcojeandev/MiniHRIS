@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->string('employee_id'); 
+            $table->foreign('employee_id')
+                ->references('employee_id')
+                ->on('employees')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->string('employee_name');
-            $table->date('date');
-            $table->time('time_in');
-            $table->time('time_out');
-            $table->enum('attendance_status', ['present', 'late', 'absent', 'leave']);
-            $table->timestamps();
-        });
+    $table->date('date');
+    $table->time('time_in');
+    $table->time('time_out');
+    $table->enum('attendance_status', ['present', 'late', 'absent', 'leave']);
+    $table->timestamps();
+});
     }
 
     /**

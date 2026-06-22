@@ -4,7 +4,8 @@ import toast from 'react-hot-toast'
 
 interface AttendanceRecord {
   id: number
-  employee_id: number
+  employee_id: string
+  employee_name: string  // ← Added this field
   date: string
   time_in: string
   time_out: string
@@ -14,12 +15,6 @@ interface AttendanceRecord {
     fullname: string
     employee_id: string
   }
-}
-
-interface Employee {
-  id: number
-  fullname: string
-  employee_id: string
 }
 
 const Attendance = () => {
@@ -34,11 +29,11 @@ const Attendance = () => {
     attendance_status: 'present',
   })
 
-  // Fetch attendance records
   const fetchAttendance = async () => {
     try {
       const response = await attendanceApi.getAll()
-      setRecords(response.data.data || response.data || [])
+      const data = response.data?.data || response.data || []
+      setRecords(Array.isArray(data) ? data : [])
     } catch (error) {
       toast.error('Failed to load attendance records')
     } finally {
@@ -50,12 +45,10 @@ const Attendance = () => {
     fetchAttendance()
   }, [])
 
-  // Handle form input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  // Submit form (create attendance)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -84,6 +77,20 @@ const Attendance = () => {
       'on_leave': 'bg-blue-100 text-blue-800',
     }
     return styles[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  // Helper function to get employee name
+  const getEmployeeName = (record: AttendanceRecord) => {
+    // Check if employee relationship exists with fullname
+    if (record.employee?.fullname) {
+      return record.employee.fullname
+    }
+    // Check if employee_name exists directly
+    if (record.employee_name) {
+      return record.employee_name
+    }
+    // Fallback to employee_id
+    return `Employee ${record.employee_id}`
   }
 
   if (loading) {
@@ -141,7 +148,7 @@ const Attendance = () => {
             <thead className="bg-gray-50 border-b">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee Name</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Time In</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Time Out</th>
@@ -158,7 +165,7 @@ const Attendance = () => {
                   <tr key={record.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 text-sm text-gray-500">{index + 1}</td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                      {record.employee?.fullname || `Employee #${record.employee_id}`}
+                      {getEmployeeName(record)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{record.date}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{record.time_in || '-'}</td>
@@ -186,10 +193,10 @@ const Attendance = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
                 <input
                   name="employee_id"
-                  type="number"
+                  type="text"
                   value={formData.employee_id}
                   onChange={handleChange}
-                  placeholder="Enter employee ID"
+                  placeholder="EMP-001"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   required
                 />

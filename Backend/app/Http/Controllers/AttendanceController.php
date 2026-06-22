@@ -14,22 +14,12 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        try {
-            $attendance = Attendance::with('employee')
-                ->orderBy('date', 'desc')
-                ->paginate(15);
-
-            return response()->json([
-                'status' => 1,
-                'message' => 'Attendance records retrieved successfully.',
-                'data' => $attendance
-            ], 200);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
-            ], 500);
-        }
+        $attendance = Attendance::with('employee')->get();
+        return response()->json([
+            'status' => 1,
+            'message' => 'Attendance records retrieved successfully.',
+            'data' => $attendance
+        ]);
     }
 
     /**
@@ -51,6 +41,9 @@ class AttendanceController extends Controller
                     'message' => 'Attendance already recorded for this employee on this date.'
                 ], 422);
             }
+
+            $employee_name = Employee::where('employee_id', $request->employee_id)->first();
+            $validated["employee_name"] = $employee_name->fullname;
 
             $attendance = Attendance::create($validated);
             $attendance->load('employee');

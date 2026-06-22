@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 
 interface Employee {
   id: number
-  employee_id: string
+  employee_id: string  // ← Changed to string (stores "EMP-001")
   fullname: string
   email: string
   contact: string
@@ -31,11 +31,40 @@ const Employees = () => {
     employee_status: 'active',
   })
 
+  // Generate employee ID: EMP-001, EMP-002, etc.
+  const generateEmployeeId = (employees: Employee[]) => {
+    if (employees.length === 0) {
+      return 'EMP-001'
+    }
+    
+    const numbers = employees
+      .map(emp => {
+        // Handle both string and number employee_id
+        const id = String(emp.employee_id)
+        const match = id.match(/EMP-(\d+)/)
+        return match ? parseInt(match[1]) : 0
+      })
+      .filter(num => num > 0)
+
+    if (numbers.length === 0) {
+      return 'EMP-001'
+    }
+
+    const maxNumber = Math.max(...numbers)
+    const nextNumber = maxNumber + 1
+    return `EMP-${String(nextNumber).padStart(3, '0')}`
+  }
   // Fetch employees
   const fetchEmployees = async () => {
     try {
       const response = await employeeApi.getAll()
-      setEmployees(response.data.data || response.data)
+      const data = response.data.data || response.data || []
+      setEmployees(data)
+      
+      if (!editingEmployee) {
+        const newId = generateEmployeeId(data)
+        setFormData(prev => ({ ...prev, employee_id: newId }))
+      }
     } catch (error) {
       toast.error('Failed to load employees')
     } finally {
@@ -55,8 +84,9 @@ const Employees = () => {
   // Open modal for create
   const openCreateModal = () => {
     setEditingEmployee(null)
+    const newId = generateEmployeeId(employees)
     setFormData({
-      employee_id: '',
+      employee_id: newId,
       fullname: '',
       email: '',
       contact: '',
@@ -168,7 +198,7 @@ const Employees = () => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">ID</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">#</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Employee ID</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Full Name</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
@@ -184,9 +214,9 @@ const Employees = () => {
                   <td colSpan={8} className="text-center py-8 text-gray-500">No employees found</td>
                 </tr>
               ) : (
-                filteredEmployees.map((emp) => (
+                filteredEmployees.map((emp, index) => (
                   <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 text-sm text-gray-500">{emp.id}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{index + 1}</td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{emp.employee_id}</td>
                     <td className="px-6 py-4 text-sm text-gray-700">{emp.fullname}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{emp.email}</td>
@@ -231,11 +261,13 @@ const Employees = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
                 <input
                   name="employee_id"
+                  type="text"
                   value={formData.employee_id}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-gray-50"
+                  disabled
                 />
+                <p className="text-xs text-gray-400 mt-1">Auto-generated (e.g., EMP-001)</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>

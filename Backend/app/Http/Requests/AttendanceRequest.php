@@ -36,9 +36,14 @@ class AttendanceRequest extends FormRequest
         return [
             'employee_id' => [
                 $isUpdate ? 'sometimes' : 'required',
-                'integer',
-                'exists:employees,id'
+                'string',
+                'exists:employees,employee_id'
             ],
+            // 'fullname' => [
+            //     'nullable',
+            //     'string',
+            //     'max:255'
+            // ],
             'date' => [
                 $isUpdate ? 'sometimes' : 'required',
                 'date',
@@ -69,7 +74,7 @@ class AttendanceRequest extends FormRequest
         return [
             // Employee ID
             'employee_id.required' => 'Employee is required.',
-            'employee_id.integer' => 'Invalid employee selected.',
+            'employee_id.string' => 'Invalid employee selected.',
             'employee_id.exists' => 'The selected employee does not exist.',
 
             // Date
