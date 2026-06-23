@@ -160,4 +160,4 @@ Frontend runs on: http://localhost:5173
 ![Payroll Page](./screenshots/payroll.jpg)
 
 ### Payroll Slip (Print Preview)
-![Payroll Slip](./screenshots/image.jpg)
+![Payroll Slip](./screenshots/image.png)
