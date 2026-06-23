@@ -134,3 +134,29 @@ VITE_API_URL=http://localhost:8000/api
 npm run dev
 
 Frontend runs on: http://localhost:5173
+```
+## 📸 Screenshots
+
+### Landing Page
+![Landing Page](./screenshots/landing.png)
+
+### Login Page
+![Login Page](./screenshots/login.png)
+
+### Dashboard
+![Dashboard](./screenshots/dashboard.png)
+
+### Employees Management
+![Employees Page](./screenshots/employees.png)
+
+### Attendance Tracking
+![Attendance Page](./screenshots/attendance.png)
+
+### Salary Management
+![Salaries Page](./screenshots/salaries.png)
+
+### Payroll Summary
+![Payroll Page](./screenshots/payroll.png)
+
+### Payroll Slip (Print Preview)
+![Payroll Slip](./screenshots/payroll-slip.png)
