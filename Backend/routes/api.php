@@ -12,14 +12,17 @@ use App\Http\Controllers\DashboardController;
 Route::post('/login', [AuthController::class, 'login'])
     ->middleware('throttle:5,1');
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+});
 Route::middleware(['admin', 'auth:sanctum', 'throttle:60,1'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        // Logout
+        Route::post('/logout', [AuthController::class, 'logout']);
+
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index']);
     

@@ -19,7 +19,7 @@ class SalaryController extends Controller
     public function index()
     {
         try {
-            $salaries = Salary::with('employee')->get();
+            $salaries = Salary::with('employee:id,fullname,employee_id,email')->get();
 
             return response()->json([
                 'status' => 1,

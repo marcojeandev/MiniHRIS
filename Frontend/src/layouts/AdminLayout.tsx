@@ -21,7 +21,6 @@ const AdminLayout = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -32,7 +31,6 @@ const AdminLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Close sidebar on mobile when route changes
   useEffect(() => {
     setSidebarOpen(false)
   }, [window.location.pathname])
@@ -52,7 +50,6 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -60,7 +57,6 @@ const AdminLayout = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
         w-[280px] bg-slate-900 text-white
@@ -102,7 +98,7 @@ const AdminLayout = () => {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* ✅ FIXED NAVIGATION */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-3 py-2">
             Main Menu
@@ -119,13 +115,17 @@ const AdminLayout = () => {
                 }`
               }
             >
-              <Icon 
-                size={20} 
-                className={`${color} ${({ isActive }: { isActive: boolean }) => isActive ? 'text-blue-400' : ''}`} 
-              />
-              <span className="text-sm font-medium">{label}</span>
-              {({ isActive }: { isActive: boolean }) => isActive && (
-                <span className="ml-auto w-1.5 h-8 rounded-full bg-blue-500" />
+              {({ isActive }) => (
+                <>
+                  <Icon 
+                    size={20} 
+                    className={`${color} ${isActive ? 'text-blue-400' : ''}`} 
+                  />
+                  <span className="text-sm font-medium">{label}</span>
+                  {isActive && (
+                    <span className="ml-auto w-1.5 h-8 rounded-full bg-blue-500" />
+                  )}
+                </>
               )}
             </NavLink>
           ))}
@@ -143,9 +143,7 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        {/* Top Header */}
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
           <div className="flex items-center justify-between px-6 h-16">
             <div className="flex items-center gap-4">
@@ -156,15 +154,10 @@ const AdminLayout = () => {
                 <Menu size={24} />
               </button>
               <div>
-                <h2 className="text-lg font-semibold text-slate-800">
-                  {/* Dynamic page title - can be enhanced with router */}
-                  Dashboard
-                </h2>
-                <p className="text-xs text-slate-500">Welcome back, {user?.name?.split(' ')[0] || 'Admin'}!</p>
+                <h3 className="">Welcome back, {user?.name?.split(' ')[0] || 'Admin'}!</h3>
               </div>
             </div>
 
-            {/* Right side - User dropdown */}
             <div className="flex items-center gap-3" ref={dropdownRef}>
               <button 
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -174,7 +167,6 @@ const AdminLayout = () => {
                 <ChevronDown size={16} className={`text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               
-              {/* Dropdown Menu */}
               {dropdownOpen && (
                 <div className="absolute right-4 top-16 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 py-1 z-50">
                   <div className="px-4 py-3 border-b border-slate-100">
@@ -194,7 +186,6 @@ const AdminLayout = () => {
           </div>
         </header>
 
-        {/* Page Content */}
         <div className="p-6">
           <Outlet />
         </div>

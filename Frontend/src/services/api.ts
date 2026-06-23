@@ -55,6 +55,9 @@ export const authApi = {
 export const dashboardApi = {
   getData: () =>
     api.get('/admin/dashboard'),
+
+  generatePayroll: () => 
+    api.post('/admin/dashboard/generate-payroll'),
 }
 
 // ============================================

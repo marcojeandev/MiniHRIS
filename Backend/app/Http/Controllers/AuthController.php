@@ -28,11 +28,6 @@ class AuthController extends Controller
                 ], 401);
             }
 
-        // if (!$user || !$user->status !== 'active') {
-        //     return response()->json([
-        //         'message' => 'Invalid credentials, actiive pakaw'
-        //     ], 401);
-        // }
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -40,5 +35,22 @@ class AuthController extends Controller
             'token' => $token,
             'token_type' => 'Bearer',
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->tokens()->delete();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Logged out successfully from all devices.'
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
