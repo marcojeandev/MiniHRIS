@@ -113,6 +113,7 @@ php artisan migrate
 
 2.5 Create Admin User (Optional)
 php artisan db:seed --class=DatabaseSeeder
+or go to database to get exported sql file
 
 2.6 Start Backend Server
 php artisan serve
@@ -159,4 +160,4 @@ Frontend runs on: http://localhost:5173
 ![Payroll Page](./screenshots/payroll.jpg)
 
 ### Payroll Slip (Print Preview)
-![Payroll Slip](./screenshots/image.jpg)
+![Payroll Slip](./screenshots/image.png)
