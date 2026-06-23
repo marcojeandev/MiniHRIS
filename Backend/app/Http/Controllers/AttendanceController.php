@@ -6,14 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Attendance;
 use App\Models\Employee;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing of attendance records.
-     */
+    use AuthorizesRequests;
+    
     public function index()
     {
+        $this->authorize('viewAny', Attendance::class);
         $attendance = Attendance::with('employee')->get();
         return response()->json([
             'status' => 1,
@@ -22,13 +23,12 @@ class AttendanceController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created attendance record.
-     */
+    
     public function store(AttendanceRequest $request)
     {
         try {
             $validated = $request->validated();
+            $this->authorize('create', Attendance::class);
 
             // Check if attendance already exists for this employee on this date
             $existing = Attendance::where('employee_id', $validated['employee_id'])
@@ -82,14 +82,12 @@ class AttendanceController extends Controller
         }
     }
 
-    /**
-     * Display the specified attendance record.
-     */
+    
     public function show($id)
     {
         try {
             $attendance = Attendance::with('employee')->find($id);
-
+            $this->authorize('view', $attendance);
             if (!$attendance) {
                 return response()->json([
                     'status' => 0,

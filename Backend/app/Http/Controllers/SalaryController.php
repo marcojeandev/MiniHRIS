@@ -13,9 +13,6 @@ class SalaryController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * Display a listing of salaries.
-     */
     public function index()
     {
         try {
@@ -34,9 +31,7 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Store a newly created salary.
-     */
+ 
     public function store(SalaryRequest $request)
     {
         try {
@@ -76,9 +71,6 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Display the specified salary.
-     */
     public function show($id)
     {
         try {
@@ -104,9 +96,6 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Update the specified salary.
-     */
     public function update(SalaryRequest $request, $id)
     {
         try {
@@ -148,9 +137,6 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Remove the specified salary.
-     */
     public function destroy($id)
     {
         try {
@@ -180,9 +166,6 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Get salary by employee ID.
-     */
     public function getByEmployee($employeeId)
     {
         try {
@@ -221,9 +204,7 @@ class SalaryController extends Controller
         }
     }
 
-    /**
-     * Get salary summary.
-     */
+    
     public function summary()
     {
         try {

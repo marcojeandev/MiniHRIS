@@ -54,7 +54,7 @@ class DashboardController extends Controller
                         'present' => $presentToday,
                         'late' => $lateToday,
                         'absent' => $absentToday,
-                        'leave' => $leaveToday, // ✅ ADD THIS LINE
+                        'leave' => $leaveToday, 
                     ],
                     'recent_employees' => $recentEmployees,
                 ]
