@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Building2, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import toast from 'react-hot-toast'  // ← Import toast
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -18,8 +19,10 @@ const Login = () => {
     try {
       await login(email, password)
       navigate('/dashboard')
-    } catch (error) {
-      // Error already handled in AuthContext
+    } catch (error: any) {
+      console.log('Error caught:', error)  // ← Should show in console
+      // const message = error?.response?.data?.message || 'Invalid credentials'
+      toast.error(message)  // ← MUST BE HERE
     } finally {
       setLoading(false)
     }
@@ -82,6 +85,7 @@ const Login = () => {
                   placeholder="••••••••"
                   required
                 />
+                
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
