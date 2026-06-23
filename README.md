@@ -138,25 +138,25 @@ Frontend runs on: http://localhost:5173
 ## 📸 Screenshots
 
 ### Landing Page
-![Landing Page](./screenshots/landing.png)
+![Landing Page](./screenshots/landing.jpg)
 
 ### Login Page
-![Login Page](./screenshots/login.png)
+![Login Page](./screenshots/login.jpg)
 
 ### Dashboard
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./screenshots/dashboard.jpg)
 
 ### Employees Management
-![Employees Page](./screenshots/employees.png)
+![Employees Page](./screenshots/Employees.jpg)
 
 ### Attendance Tracking
-![Attendance Page](./screenshots/attendance.png)
+![Attendance Page](./screenshots/attendance.jpg)
 
 ### Salary Management
-![Salaries Page](./screenshots/salaries.png)
+![Salaries Page](./screenshots/salaries.jpg)
 
 ### Payroll Summary
-![Payroll Page](./screenshots/payroll.png)
+![Payroll Page](./screenshots/payroll.jpg)
 
 ### Payroll Slip (Print Preview)
-![Payroll Slip](./screenshots/payroll-slip.png)
+![Payroll Slip](./screenshots/image.jpg)
