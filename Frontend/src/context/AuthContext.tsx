@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react'
+import React, { createContext, useState, useContext, useEffect } from 'react'
 import { authApi } from '../services/api'
 import toast from 'react-hot-toast'
 
@@ -15,17 +15,16 @@ interface AuthContextType {
   isAuthenticated: boolean
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
-  // Check for existing session on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
@@ -40,8 +39,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     try {
       const response = await authApi.login(email, password)
-      
-      // Assuming your API returns: { status: 1, data: { token, user } }
       const { token, user } = response.data.data || response.data
       
       setToken(token)
@@ -60,15 +57,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = async () => {
     try {
-      await authApi.logout()
+      const response = await authApi.logout()
+      const message = response?.data?.message || 'Logged out successfully from all devices.'
+      toast.success(message)
     } catch (error) {
       console.error('Logout error:', error)
+      toast.error('Logout failed. Please try again.')
     } finally {
       setToken(null)
       setUser(null)
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      toast.success('Logged out successfully')
     }
   }
 
