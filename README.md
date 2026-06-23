@@ -1,58 +1,136 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MiniHRIS - Human Resource Information System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![MiniHRIS Logo](https://img.shields.io/badge/Laravel-11.x-red?style=flat&logo=laravel)
+![React](https://img.shields.io/badge/React-18.x-blue?style=flat&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat&logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-5.x-purple?style=flat&logo=vite)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-cyan?style=flat&logo=tailwindcss)
 
-## About Laravel
+A complete Human Resource Management System built with Laravel API and React TypeScript frontend. Manage employees, attendance, salaries, and payroll in one place.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation Guide](#installation-guide)
+- [API Documentation](#api-documentation)
+- [Screenshots](#screenshots)
+- [Project Structure](#project-structure)
+- [Author](#author)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👥 Employee Management
+- Full CRUD operations (Create, Read, Update, Delete)
+- Auto-generated Employee IDs (EMP-001, EMP-002, etc.)
+- Employee status filtering (Active, Resigned, On Leave)
+- Search by name, ID, or department
 
-## Learning Laravel
+### 📅 Attendance Tracking
+- Record attendance with Time In / Time Out
+- Attendance status: Present, Late, Absent, On Leave
+- Summary cards (Present, Late, Absent, On Leave)
+- Filter by employee and date range
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 💰 Salary Management
+- Set fixed salary per employee
+- Auto-calculate Net Salary (Basic + Allowance - Deductions)
+- Summary cards (Total Payroll, Average Salary, Highest Salary)
+- Prevent duplicate salary entries
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📄 Payroll Generation
+- Generate payroll from fixed salary data
+- Auto-filled basic salary from employee's fixed salary
+- Printable payroll slips (with Print & Close buttons)
+- Summary cards (Total Payroll, Total Employees, Average Salary)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### 📊 Dashboard
+- Real-time statistics
+- Total Employees, Active Employees, On Leave, Monthly Payroll
+- Recent employees table
 
-## Agentic Development
+### 🔐 Security
+- Laravel Sanctum API authentication
+- Role-based authorization (Admin/Employee)
+- CSRF/XSS protection
+- SQL injection prevention
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🛠️ Tech Stack
 
+### Backend
+| Technology | Version |
+|------------|---------|
+| PHP | 8.2+ |
+| Laravel | 11.x |
+| MySQL | 8.0+ |
+| Laravel Sanctum | 4.x |
+| Composer | 2.x |
+
+### Frontend
+| Technology | Version |
+|------------|---------|
+| React | 18.x |
+| TypeScript | 5.x |
+| Vite | 5.x |
+| Tailwind CSS | 3.x |
+| React Router | 6.x |
+| Axios | 1.x |
+| Lucide Icons | Latest |
+
+## 📦 Installation Guide
+
+### Prerequisites
+- PHP 8.2 or higher
+- Composer
+- MySQL 8.0 or higher
+- Node.js 18+ and npm
+
+### Step 1: Clone the Repository
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/marcojeandev/minihris.git
+cd minihris
 
-php artisan boost:install
-```
+Step 2: Backend Setup (Laravel)
+2.1 Install PHP dependencies
+cd backend
+composer install
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2.2 Configure Environment
+cp .env.example .env
 
-## Contributing
+Edit .env file:
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=hris_db
+DB_USERNAME=root
+DB_PASSWORD=
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2.3 Generate Application Key
+php artisan key:generate
 
-## Code of Conduct
+2.4 Run Migrations
+php artisan migrate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2.5 Create Admin User (Optional)
+php artisan db:seed --class=DatabaseSeeder
 
-## Security Vulnerabilities
+2.6 Start Backend Server
+php artisan serve
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Step 3: Frontend Setup (React)
+3.1 Navigate to Frontend
+cd ../frontend
 
-## License
+3.2 Install Node dependencies
+npm install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3.3 Create Environment File
+cp .env.example .env
+
+Edit .env:
+VITE_API_URL=http://localhost:8000/api
+
+3.4 Start Development Server
+npm run dev
+
+Frontend runs on: http://localhost:5173
