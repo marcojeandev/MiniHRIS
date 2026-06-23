@@ -23,14 +23,20 @@ class SalaryRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Get employee ID from route (for update)
-        $salaryId = $this->route('salary') ? $this->route('salary')->id : null;
-
+        // ✅ Get the ID from route parameter safely
+        $salaryId = $this->route('salary');
+            
+        // If it's an object, get the id, otherwise use the value directly
+        if ($salaryId && is_object($salaryId) && method_exists($salaryId, 'getKey')) {
+            $salaryId = $salaryId->getKey();
+        } else {
+            $salaryId = $salaryId; // It's already a string/numeric ID
+        }
         return [
             'employee_id' => [
                 'required',
-                'integer',
-                'exists:employees,id'
+                'string',
+                'exists:employees,employee_id'
             ],
             'basic_salary' => [
                 'required',
@@ -69,7 +75,7 @@ class SalaryRequest extends FormRequest
         return [
             // Employee ID
             'employee_id.required' => 'Employee is required.',
-            'employee_id.integer' => 'Invalid employee selected.',
+            'employee_id.string' => 'Invalid employee selected.',
             'employee_id.exists' => 'The selected employee does not exist.',
 
             // Basic Salary

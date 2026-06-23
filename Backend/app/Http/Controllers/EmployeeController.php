@@ -75,7 +75,7 @@ class EmployeeController extends Controller
         try {
             $employees = Employee::findOrFail($id);
             $this->authorize('view', $employees);
-
+            
             return response()->json([
                 'status' => 1,
                 'message' => 'Employee data fetched successfully.',

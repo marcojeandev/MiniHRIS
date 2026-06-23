@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 
 interface Employee {
   id: number
-  employee_id: string  // ← Changed to string (stores "EMP-001")
+  employee_id: string
   fullname: string
   email: string
   contact: string
@@ -18,6 +18,7 @@ const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all') // ✅ New state for status filter
   const [showModal, setShowModal] = useState(false)
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null)
   const [formData, setFormData] = useState({
@@ -39,7 +40,6 @@ const Employees = () => {
     
     const numbers = employees
       .map(emp => {
-        // Handle both string and number employee_id
         const id = String(emp.employee_id)
         const match = id.match(/EMP-(\d+)/)
         return match ? parseInt(match[1]) : 0
@@ -54,6 +54,7 @@ const Employees = () => {
     const nextNumber = maxNumber + 1
     return `EMP-${String(nextNumber).padStart(3, '0')}`
   }
+
   // Fetch employees
   const fetchEmployees = async () => {
     try {
@@ -145,12 +146,29 @@ const Employees = () => {
     }
   }
 
-  // Filter employees by search
-  const filteredEmployees = employees.filter((emp) =>
-    emp.fullname.toLowerCase().includes(search.toLowerCase()) ||
-    emp.employee_id.toLowerCase().includes(search.toLowerCase()) ||
-    emp.department.toLowerCase().includes(search.toLowerCase())
-  )
+  // ✅ Filter employees by search AND status
+  const filteredEmployees = employees.filter((emp) => {
+    const matchesSearch = 
+      emp.fullname.toLowerCase().includes(search.toLowerCase()) ||
+      emp.employee_id.toLowerCase().includes(search.toLowerCase()) ||
+      emp.department.toLowerCase().includes(search.toLowerCase())
+    
+    const matchesStatus = statusFilter === 'all' || emp.employee_status === statusFilter
+    
+    return matchesSearch && matchesStatus
+  })
+
+  // ✅ Get status counts
+  const getStatusCounts = () => {
+    return {
+      all: employees.length,
+      active: employees.filter(e => e.employee_status === 'active').length,
+      resigned: employees.filter(e => e.employee_status === 'resigned').length,
+      leave: employees.filter(e => e.employee_status === 'leave').length,
+    }
+  }
+
+  const statusCounts = getStatusCounts()
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
@@ -178,6 +196,50 @@ const Employees = () => {
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           + Add Employee
+        </button>
+      </div>
+
+      {/* ✅ Status Filter Tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button
+          onClick={() => setStatusFilter('all')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            statusFilter === 'all'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          All ({statusCounts.all})
+        </button>
+        <button
+          onClick={() => setStatusFilter('active')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            statusFilter === 'active'
+              ? 'bg-green-600 text-white'
+              : 'bg-green-50 text-green-700 hover:bg-green-100'
+          }`}
+        >
+          Active ({statusCounts.active})
+        </button>
+        <button
+          onClick={() => setStatusFilter('resigned')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            statusFilter === 'resigned'
+              ? 'bg-red-600 text-white'
+              : 'bg-red-50 text-red-700 hover:bg-red-100'
+          }`}
+        >
+          Resigned ({statusCounts.resigned})
+        </button>
+        <button
+          onClick={() => setStatusFilter('leave')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            statusFilter === 'leave'
+              ? 'bg-yellow-600 text-white'
+              : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100'
+          }`}
+        >
+          On Leave ({statusCounts.leave})
         </button>
       </div>
 

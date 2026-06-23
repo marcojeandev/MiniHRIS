@@ -35,6 +35,27 @@ class AttendanceController extends Controller
                 ->where('date', $validated['date'])
                 ->first();
 
+            $present = $request->attendance_status === 'present';
+            $late = $request->attendance_status === 'late';
+            $absent = $request->attendance_status === 'absent';
+            $on_leave = $request->attendance_status === 'on_leave';
+            $empty_time_in = empty($request->time_in);
+            $empty_time_out = empty($request->time_out);
+            $time_out = $request->time_out;
+            $time_in = $request->time_in;
+
+            if (($present || $late) && ($empty_time_in || $empty_time_out)) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Time in and time out are required for present or late status.'
+                ], 422);
+            }else if(($on_leave || $absent) && ($time_in || $time_out)){
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Time in and time out are not required for absent or on leave status.'
+                ], 422);
+            }
+
             if ($existing) {
                 return response()->json([
                     'status' => 0,

@@ -39,18 +39,13 @@ class AttendanceRequest extends FormRequest
                 'string',
                 'exists:employees,employee_id'
             ],
-            // 'fullname' => [
-            //     'nullable',
-            //     'string',
-            //     'max:255'
-            // ],
             'date' => [
                 $isUpdate ? 'sometimes' : 'required',
                 'date',
                 'before_or_equal:today'
             ],
             'time_in' => [
-                $isUpdate ? 'sometimes' : 'required',
+                'nullable',
                 'date_format:H:i',
                 'before:time_out'
             ],
@@ -61,7 +56,7 @@ class AttendanceRequest extends FormRequest
             ],
             'attendance_status' => [
                 $isUpdate ? 'sometimes' : 'required',
-                Rule::in(['present', 'late', 'absent', 'on_leave'])
+                Rule::in(['present', 'late', 'absent', 'leave'])
             ],
         ];
     }
@@ -83,7 +78,7 @@ class AttendanceRequest extends FormRequest
             'date.before_or_equal' => 'Attendance date cannot be in the future.',
 
             // Time In
-            'time_in.required' => 'Time in is required.',
+            'time_in.nullable' => 'Time in is nullable.',
             'time_in.date_format' => 'Please enter a valid time in format (HH:MM).',
             'time_in.before' => 'Time in must be before time out.',
 
@@ -92,8 +87,8 @@ class AttendanceRequest extends FormRequest
             'time_out.after' => 'Time out must be after time in.',
 
             // Attendance Status
-            'attendance_status.required' => 'Attendance status is required.',
-            'attendance_status.in' => 'Status must be: present, late, absent, or on_leave.',
+            'attendance_status.nullable' => 'Attendance status is nullable.',
+            'attendance_status.in' => 'Status must be: present, late, absent, or leave.',
         ];
     }
 

@@ -11,7 +11,8 @@ class PayrollController extends Controller
 {
     use AuthorizesRequests;
 
-    public function store(PayrollRequest $request){
+    public function store(PayrollRequest $request)
+    {
         try {
             $validated = $request->validated();
             $this->authorize('create', Payroll::class);
@@ -20,10 +21,9 @@ class PayrollController extends Controller
 
             return response()->json([
                 'status' => 1,
-                'message' => 'Payrol data created successfully.',
+                'message' => 'Payroll data created successfully.',
                 'data' => $payroll
-            ]);
-            
+            ], 201);
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
@@ -32,7 +32,8 @@ class PayrollController extends Controller
         }
     }
 
-    public function update(PayrollRequest $request, $id){
+    public function update(PayrollRequest $request, $id)
+    {
         try {
             $payroll = Payroll::findOrFail($id);
             $validated = $request->validated();
@@ -42,10 +43,9 @@ class PayrollController extends Controller
 
             return response()->json([
                 'status' => 1,
-                'message' => 'Payrol data updated successfully.',
+                'message' => 'Payroll data updated successfully.',
                 'data' => $payroll
-            ]);
-            
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
@@ -54,15 +54,10 @@ class PayrollController extends Controller
         }
     }
 
-    /**
-     * Display a listing of payroll records.
-     */
     public function index()
     {
         try {
-            $payrolls = Payroll::with(['employee', 'salary'])
-                ->orderBy('payroll_date', 'desc')
-                ->paginate(15);
+            $payrolls = Payroll::with('employee')->get();
 
             return response()->json([
                 'status' => 1,
@@ -77,13 +72,11 @@ class PayrollController extends Controller
         }
     }
 
-    /**
-     * Display the specified payroll record.
-     */
     public function show($id)
     {
         try {
-            $payroll = Payroll::with(['employee', 'salary'])->find($id);
+            // ✅ Fixed: Only load 'employee' relationship
+            $payroll = Payroll::with('employee')->find($id);
 
             if (!$payroll) {
                 return response()->json([
@@ -105,13 +98,11 @@ class PayrollController extends Controller
         }
     }
 
-    /**
-     * Get payroll records by employee ID.
-     */
     public function getByEmployee($employeeId)
     {
         try {
-            $payrolls = Payroll::with(['employee', 'salary'])
+            // ✅ Fixed: Only load 'employee' relationship
+            $payrolls = Payroll::with('employee')
                 ->where('employee_id', $employeeId)
                 ->orderBy('payroll_date', 'desc')
                 ->paginate(15);
@@ -136,51 +127,20 @@ class PayrollController extends Controller
         }
     }
 
-    /**
-     * Get payroll summary.
-     */
     public function summary()
     {
         try {
-            $totalPayroll = Payroll::sum('net_pay');
-            $averagePay = Payroll::avg('net_pay');
+            $totalPayroll = Payroll::sum('net_salary');
             $totalEmployees = Payroll::distinct('employee_id')->count();
-            
-            $highestPay = Payroll::with('employee')
-                ->orderBy('net_pay', 'desc')
-                ->first();
-                
-            $lowestPay = Payroll::with('employee')
-                ->orderBy('net_pay', 'asc')
-                ->first();
-
-            $statusSummary = Payroll::selectRaw('status, COUNT(*) as count, SUM(net_pay) as total')
-                ->groupBy('status')
-                ->get();
-
-            // Calculate total gross and deductions
-            $totalGross = Payroll::sum('gross_pay');
-            $totalDeductions = Payroll::sum('total_deductions');
+            $averageSalary = Payroll::avg('net_salary');
 
             return response()->json([
                 'status' => 1,
                 'message' => 'Payroll summary retrieved successfully.',
                 'data' => [
                     'total_payroll' => round($totalPayroll, 2),
-                    'total_gross_pay' => round($totalGross, 2),
-                    'total_deductions' => round($totalDeductions, 2),
-                    'average_pay' => round($averagePay, 2),
-                    'total_employees_paid' => $totalEmployees,
-                    'highest_pay' => $highestPay ? [
-                        'employee' => $highestPay->employee->fullname ?? 'N/A',
-                        'amount' => round($highestPay->net_pay, 2)
-                    ] : null,
-                    'lowest_pay' => $lowestPay ? [
-                        'employee' => $lowestPay->employee->fullname ?? 'N/A',
-                        'amount' => round($lowestPay->net_pay, 2)
-                    ] : null,
-                    'status_summary' => $statusSummary,
-                    'formula' => 'Net Salary = Gross Pay - Total Deductions'
+                    'total_employees' => $totalEmployees,
+                    'average_salary' => round($averageSalary, 2),
                 ]
             ], 200);
         } catch (\Throwable $e) {
@@ -190,6 +150,4 @@ class PayrollController extends Controller
             ], 500);
         }
     }
-
-
 }

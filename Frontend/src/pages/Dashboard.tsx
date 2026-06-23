@@ -1,29 +1,80 @@
+import { useEffect, useState } from 'react'
 import { Users, UserCheck, UserX, DollarSign } from 'lucide-react'
+import { dashboardApi } from '../services/api'
+import toast from 'react-hot-toast'
+
+interface Stats {
+  total_employees: number
+  active_employees: number
+  employees_on_leave: number
+  total_monthly_payroll: number
+}
+
+interface RecentEmployee {
+  id: number
+  employee_id: string
+  fullname: string
+  position: string
+  department: string
+  employee_status: string
+}
 
 const Dashboard = () => {
-  // Mock data — replace with actual API calls later
-  const stats = {
-    totalEmployees: 45,
-    activeEmployees: 38,
-    employeesOnLeave: 7,
-    totalMonthlyPayroll: 275000,
+  const [stats, setStats] = useState<Stats>({
+    total_employees: 0,
+    active_employees: 0,
+    employees_on_leave: 0,
+    total_monthly_payroll: 0,
+  })
+  const [recentEmployees, setRecentEmployees] = useState<RecentEmployee[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchDashboard = async () => {
+    try {
+      const response = await dashboardApi.getData()
+      const data = response.data?.data || response.data
+      
+      setStats(data.stats || {
+        total_employees: 0,
+        active_employees: 0,
+        employees_on_leave: 0,
+        total_monthly_payroll: 0,
+      })
+      setRecentEmployees(data.recent_employees || [])
+    } catch (error) {
+      toast.error('Failed to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const recentEmployees = [
-    { id: 1, name: 'Juan Dela Cruz', position: 'Software Developer', department: 'IT', status: 'Active' },
-    { id: 2, name: 'Maria Santos', position: 'UI/UX Designer', department: 'Design', status: 'Active' },
-    { id: 3, name: 'Pedro Reyes', position: 'Project Manager', department: 'Operations', status: 'On Leave' },
-    { id: 4, name: 'Anna Rivera', position: 'HR Coordinator', department: 'HR', status: 'Active' },
-    { id: 5, name: 'Carlos Mendoza', position: 'System Analyst', department: 'IT', status: 'Resigned' },
-  ]
+  useEffect(() => {
+    fetchDashboard()
+  }, [])
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      'Active': 'bg-green-100 text-green-800',
-      'On Leave': 'bg-yellow-100 text-yellow-800',
-      'Resigned': 'bg-red-100 text-red-800',
+      'active': 'bg-green-100 text-green-800',
+      'leave': 'bg-yellow-100 text-yellow-800',
+      'resigned': 'bg-red-100 text-red-800',
     }
     return styles[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-PH', {
+      style: 'currency',
+      currency: 'PHP',
+      minimumFractionDigits: 2,
+    }).format(amount)
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6">
+        <p className="text-gray-500">Loading dashboard...</p>
+      </div>
+    )
   }
 
   return (
@@ -39,7 +90,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Employees</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.totalEmployees}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total_employees}</p>
             </div>
             <div className="p-3 bg-blue-100 rounded-full">
               <Users className="h-6 w-6 text-blue-600" />
@@ -51,7 +102,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Active Employees</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.activeEmployees}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.active_employees}</p>
             </div>
             <div className="p-3 bg-green-100 rounded-full">
               <UserCheck className="h-6 w-6 text-green-600" />
@@ -63,7 +114,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Employees on Leave</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.employeesOnLeave}</p>
+              <p className="text-3xl font-bold text-gray-900 mt-1">{stats.employees_on_leave}</p>
             </div>
             <div className="p-3 bg-yellow-100 rounded-full">
               <UserX className="h-6 w-6 text-yellow-600" />
@@ -76,7 +127,7 @@ const Dashboard = () => {
             <div>
               <p className="text-sm font-medium text-gray-500">Total Monthly Payroll</p>
               <p className="text-3xl font-bold text-gray-900 mt-1">
-                ₱{stats.totalMonthlyPayroll.toLocaleString()}
+                {formatCurrency(stats.total_monthly_payroll)}
               </p>
             </div>
             <div className="p-3 bg-purple-100 rounded-full">
@@ -96,6 +147,7 @@ const Dashboard = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
@@ -103,19 +155,26 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {recentEmployees.map((emp, index) => (
-                <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm text-gray-500">{index + 1}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{emp.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{emp.position}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{emp.department}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(emp.status)}`}>
-                      {emp.status}
-                    </span>
-                  </td>
+              {recentEmployees.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-500">No recent employees</td>
                 </tr>
-              ))}
+              ) : (
+                recentEmployees.map((emp, index) => (
+                  <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-gray-500">{index + 1}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{emp.employee_id}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{emp.fullname}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{emp.position}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{emp.department}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusBadge(emp.employee_status)}`}>
+                        {emp.employee_status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -35,7 +35,9 @@ api.interceptors.response.use(
   }
 )
 
-// Auth API calls
+// ============================================
+// AUTH API CALLS
+// ============================================
 export const authApi = {
   login: (email: string, password: string) =>
     api.post('/login', { email, password }),
@@ -47,7 +49,17 @@ export const authApi = {
     api.get('/user'),
 }
 
-// Employee API calls
+// ============================================
+// DASHBOARD API CALLS
+// ============================================
+export const dashboardApi = {
+  getData: () =>
+    api.get('/admin/dashboard'),
+}
+
+// ============================================
+// EMPLOYEE API CALLS
+// ============================================
 export const employeeApi = {
   getAll: () =>
     api.get('/admin/employees'),
@@ -65,7 +77,9 @@ export const employeeApi = {
     api.delete(`/admin/employees/${id}`),
 }
 
-// Attendance API calls
+// ============================================
+// ATTENDANCE API CALLS
+// ============================================
 export const attendanceApi = {
   getAll: () =>
     api.get('/admin/attendance'),
@@ -86,10 +100,15 @@ export const attendanceApi = {
     api.get('/admin/attendance/summary'),
 }
 
-// Salary API calls
+// ============================================
+// SALARY API CALLS
+// ============================================
 export const salaryApi = {
   getAll: () =>
     api.get('/admin/salaries'),
+  
+  getByEmployee: (employeeId: string) =>
+    api.get(`/admin/salaries/employee/${employeeId}`),  // ← ADD THIS
   
   getSummary: () =>
     api.get('/admin/salaries/summary'),
@@ -104,14 +123,24 @@ export const salaryApi = {
     api.delete(`/admin/salaries/${id}`),
 }
 
-// Payroll API calls
+// ============================================
+// PAYROLL API CALLS
+// ============================================
 export const payrollApi = {
   getAll: () =>
     api.get('/admin/payroll'),
   
   getSummary: () =>
     api.get('/admin/payroll/summary'),
+  
+  create: (data: any) =>
+    api.post('/admin/payroll', data),
+  
+  update: (id: number, data: any) =>
+    api.put(`/admin/payroll/${id}`, data),
+  
+  delete: (id: number) =>
+    api.delete(`/admin/payroll/${id}`),
 }
-
 
 export default api

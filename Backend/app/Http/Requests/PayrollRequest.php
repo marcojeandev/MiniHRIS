@@ -36,9 +36,9 @@ class PayrollRequest extends FormRequest
         return [
             'employee_id' => [
                 $isUpdate ? 'sometimes' : 'required',
-                'integer',
-                'exists:employees,id',
-                Rule::unique('payrolls', 'employee_id')
+                'string',
+                'exists:employees,employee_id',
+                Rule::unique('payroll', 'employee_id')
                     ->where('payroll_date', $this->payroll_date)
                     ->ignore($payrollId)
             ],
@@ -80,7 +80,7 @@ class PayrollRequest extends FormRequest
     {
         return [
             'employee_id.required' => 'Employee is required.',
-            'employee_id.integer' => 'Invalid employee selected.',
+            'employee_id.string' => 'Invalid employee selected.',
             'employee_id.exists' => 'The selected employee does not exist.',
             'employee_id.unique' => 'Payroll record already exists for this employee on this date.',
 

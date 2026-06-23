@@ -20,12 +20,12 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('employee_name');
-    $table->date('date');
-    $table->time('time_in');
-    $table->time('time_out');
-    $table->enum('attendance_status', ['present', 'late', 'absent', 'leave']);
-    $table->timestamps();
-});
+            $table->date('date');
+            $table->time('time_in')->nullable();
+            $table->time('time_out')->nullable();
+            $table->enum('attendance_status', ['present', 'late', 'absent', 'leave']);
+            $table->timestamps();
+        });
     }
 
     /**

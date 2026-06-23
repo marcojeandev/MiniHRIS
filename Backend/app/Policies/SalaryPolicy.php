@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Policy;
+use App\Models\Salary;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -19,7 +19,7 @@ class SalaryPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Policy $policy): bool
+    public function view(User $user, Salary $salary): bool
     {
         return $user->role === 'admin';
     }
@@ -35,7 +35,7 @@ class SalaryPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Policy $policy): bool
+    public function update(User $user, Salary $salary): bool
     {
         return $user->role === 'admin';
     }
@@ -43,7 +43,7 @@ class SalaryPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Policy $policy): bool
+    public function delete(User $user, Salary $salary): bool
     {
         return $user->role === 'admin';
     }
@@ -51,7 +51,7 @@ class SalaryPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Policy $policy): bool
+    public function restore(User $user, Salary $salary): bool
     {
         return $user->role === 'admin';
     }
@@ -59,7 +59,7 @@ class SalaryPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Policy $policy): bool
+    public function forceDelete(User $user, Salary $salary): bool
     {
         return $user->role === 'admin';
     }

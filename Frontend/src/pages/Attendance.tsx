@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react'
-import { attendanceApi } from '../services/api'
+import { attendanceApi, employeeApi } from '../services/api'
 import toast from 'react-hot-toast'
+
+interface Employee {
+  id: number
+  employee_id: string
+  fullname: string
+  email: string
+}
 
 interface AttendanceRecord {
   id: number
   employee_id: string
-  employee_name: string  // ← Added this field
+  employee_name: string
   date: string
   time_in: string
   time_out: string
-  attendance_status: 'present' | 'late' | 'absent' | 'on_leave'
+  attendance_status: 'present' | 'late' | 'absent' | 'leave'
   employee?: {
     id: number
     fullname: string
@@ -29,6 +36,35 @@ const Attendance = () => {
     attendance_status: 'present',
   })
 
+  // Employee dropdown state
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [employeeSearch, setEmployeeSearch] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  // Fetch employees for dropdown
+  const fetchEmployees = async () => {
+    try {
+      const response = await employeeApi.getAll()
+      const data = response.data?.data || response.data || []
+      setEmployees(Array.isArray(data) ? data : [])
+    } catch (error) {
+      console.error('Failed to load employees:', error)
+    }
+  }
+
+  // Filter employees based on search
+  const filteredEmployees = employees.filter(emp =>
+    emp.fullname.toLowerCase().includes(employeeSearch.toLowerCase()) ||
+    emp.employee_id.toLowerCase().includes(employeeSearch.toLowerCase())
+  )
+
+  // Select an employee
+  const selectEmployee = (emp: Employee) => {
+    setFormData(prev => ({ ...prev, employee_id: emp.employee_id }))
+    setEmployeeSearch(`${emp.fullname} (${emp.employee_id})`)
+    setShowDropdown(false)
+  }
+
   const fetchAttendance = async () => {
     try {
       const response = await attendanceApi.getAll()
@@ -43,6 +79,7 @@ const Attendance = () => {
 
   useEffect(() => {
     fetchAttendance()
+    fetchEmployees() // ← Fetch employees when component mounts
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -62,6 +99,7 @@ const Attendance = () => {
         time_out: '',
         attendance_status: 'present',
       })
+      setEmployeeSearch('')
       fetchAttendance()
     } catch (error: any) {
       const message = error.response?.data?.message || 'Something went wrong'
@@ -81,15 +119,12 @@ const Attendance = () => {
 
   // Helper function to get employee name
   const getEmployeeName = (record: AttendanceRecord) => {
-    // Check if employee relationship exists with fullname
     if (record.employee?.fullname) {
       return record.employee.fullname
     }
-    // Check if employee_name exists directly
     if (record.employee_name) {
       return record.employee_name
     }
-    // Fallback to employee_id
     return `Employee ${record.employee_id}`
   }
 
@@ -136,7 +171,7 @@ const Attendance = () => {
         <div className="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500">
           <p className="text-sm text-gray-500">On Leave</p>
           <p className="text-2xl font-bold text-gray-900">
-            {records.filter(r => r.attendance_status === 'on_leave').length}
+            {records.filter(r => r.attendance_status === 'leave').length}
           </p>
         </div>
       </div>
@@ -183,24 +218,57 @@ const Attendance = () => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal with Searchable Dropdown */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Record Attendance</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+              {/* Employee ID - Searchable Dropdown */}
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Employee
+                </label>
                 <input
-                  name="employee_id"
                   type="text"
-                  value={formData.employee_id}
-                  onChange={handleChange}
-                  placeholder="EMP-001"
+                  value={employeeSearch}
+                  onChange={(e) => {
+                    setEmployeeSearch(e.target.value)
+                    setShowDropdown(true)
+                    if (e.target.value === '') {
+                      setFormData(prev => ({ ...prev, employee_id: '' }))
+                    }
+                  }}
+                  onFocus={() => setShowDropdown(true)}
+                  placeholder="Search employee by name or ID..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                   required
                 />
+                
+                {/* Dropdown */}
+                {showDropdown && filteredEmployees.length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {filteredEmployees.map((emp) => (
+                      <div
+                        key={emp.id}
+                        onClick={() => selectEmployee(emp)}
+                        className="px-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors flex justify-between items-center"
+                      >
+                        <span className="text-sm font-medium text-gray-900">{emp.fullname}</span>
+                        <span className="text-xs text-gray-500">{emp.employee_id}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Show selected employee ID */}
+                {formData.employee_id && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Selected: <span className="font-medium">{formData.employee_id}</span>
+                  </p>
+                )}
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
                 <input
@@ -212,6 +280,7 @@ const Attendance = () => {
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Time In</label>
                 <input
@@ -220,9 +289,9 @@ const Attendance = () => {
                   value={formData.time_in}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  required
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Time Out</label>
                 <input
@@ -233,6 +302,7 @@ const Attendance = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 />
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
@@ -244,9 +314,10 @@ const Attendance = () => {
                   <option value="present">Present</option>
                   <option value="late">Late</option>
                   <option value="absent">Absent</option>
-                  <option value="on_leave">On Leave</option>
+                  <option value="leave">On Leave</option>
                 </select>
               </div>
+
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"

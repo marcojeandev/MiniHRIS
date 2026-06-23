@@ -19,7 +19,7 @@ class SalaryController extends Controller
     public function index()
     {
         try {
-            $salaries = Salary::with('employee')->paginate(15);
+            $salaries = Salary::with('employee')->get();
 
             return response()->json([
                 'status' => 1,
@@ -47,6 +47,15 @@ class SalaryController extends Controller
             // Auto-calculate net salary if not provided
             if (!isset($validated['net_salary'])) {
                 $validated['net_salary'] = $validated['basic_salary'] + ($validated['allowance'] ?? 0) - ($validated['deductions'] ?? 0);
+            }
+
+            $employeeSalaryExists = Salary::with('employee')->where('employee_id', $request->employee_id)->first();
+
+            if($employeeSalaryExists){
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Employee Already have fixed salary.'
+                ], 422);
             }
 
             $salary = Salary::create($validated);
@@ -177,7 +186,8 @@ class SalaryController extends Controller
     public function getByEmployee($employeeId)
     {
         try {
-            $employee = Employee::find($employeeId);
+            // ✅ Find employee by employee_id (string) not by id (integer)
+            $employee = Employee::where('employee_id', $employeeId)->first();
 
             if (!$employee) {
                 return response()->json([
@@ -186,9 +196,7 @@ class SalaryController extends Controller
                 ], 404);
             }
 
-            $salary = Salary::with('employee')
-                ->where('employee_id', $employeeId)
-                ->first();
+            $salary = Salary::where('employee_id', $employeeId)->first();
 
             if (!$salary) {
                 return response()->json([
@@ -196,6 +204,9 @@ class SalaryController extends Controller
                     'message' => 'No salary record found for this employee.'
                 ], 404);
             }
+
+            // Load employee relationship
+            $salary->load('employee');
 
             return response()->json([
                 'status' => 1,
