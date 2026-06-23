@@ -27,6 +27,7 @@ Route::middleware(['admin', 'auth:sanctum', 'throttle:60,1'])
         Route::get('/dashboard', [DashboardController::class, 'index']);
     
         //  Employees management
+        Route::get('/employees/active', [EmployeeController::class, 'activeEmployees']);
         Route::apiResource('employees', EmployeeController::class);
 
         // Salary management 

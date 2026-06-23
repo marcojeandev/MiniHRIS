@@ -69,6 +69,9 @@ export const dashboardApi = {
 export const employeeApi = {
   getAll: () =>
     api.get('/admin/employees'),
+
+  getAllActive: () =>
+    api.get('/admin/employees/active'),
   
   getById: (id: number) =>
     api.get(`/admin/employees/${id}`),

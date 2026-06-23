@@ -78,9 +78,10 @@ const Payroll = () => {
   const [employeeSearch, setEmployeeSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
+  // ✅ Fetch active employees only
   const fetchEmployees = async () => {
     try {
-      const response = await employeeApi.getAll()
+      const response = await employeeApi.getAllActive()
       const data = response.data?.data || response.data || []
       setEmployees(Array.isArray(data) ? data : [])
     } catch (error) {

@@ -13,9 +13,6 @@ import {
   X,
   Loader2,
   Wallet,
-  Building2,
-  User,
-  Eye
 } from 'lucide-react'
 
 interface Employee {
@@ -36,7 +33,7 @@ interface Salary {
     id: number
     fullname: string
     employee_id: string
-    email: string  
+    email: string
   }
 }
 
@@ -69,15 +66,14 @@ const Salaries = () => {
     deductions: '',
   })
 
-  // Employee dropdown state
   const [employees, setEmployees] = useState<Employee[]>([])
   const [employeeSearch, setEmployeeSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
-  // Fetch employees for dropdown
+  // ✅ Fetch active employees only (exclude resigned)
   const fetchEmployees = async () => {
     try {
-      const response = await employeeApi.getAll()
+      const response = await employeeApi.getAllActive()
       const data = response.data?.data || response.data || []
       setEmployees(Array.isArray(data) ? data : [])
     } catch (error) {
@@ -85,30 +81,27 @@ const Salaries = () => {
     }
   }
 
-  // Filter employees based on search
   const filteredEmployees = employees.filter(emp =>
     emp.fullname.toLowerCase().includes(employeeSearch.toLowerCase()) ||
     emp.employee_id.toLowerCase().includes(employeeSearch.toLowerCase())
   )
 
-  // Select an employee
   const selectEmployee = (emp: Employee) => {
     setFormData(prev => ({ ...prev, employee_id: emp.employee_id }))
     setEmployeeSearch(`${emp.fullname} (${emp.employee_id})`)
     setShowDropdown(false)
   }
 
-  // Fetch salaries and summary
   const fetchData = async () => {
     try {
       const [salariesRes, summaryRes] = await Promise.all([
         salaryApi.getAll(),
         salaryApi.getSummary(),
       ])
-      
+
       const salariesData = salariesRes.data?.data || salariesRes.data || []
       setSalaries(Array.isArray(salariesData) ? salariesData : [])
-      
+
       const summaryData = summaryRes.data?.data || summaryRes.data || null
       setSummary(summaryData)
     } catch (error) {
@@ -203,7 +196,6 @@ const Salaries = () => {
     }).format(amount)
   }
 
-  // Filtered salaries
   const filteredSalaries = salaries.filter((salary) => {
     const matchesSearch =
       getEmployeeName(salary).toLowerCase().includes(search.toLowerCase()) ||
@@ -398,7 +390,6 @@ const Salaries = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Employee Search */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                   Employee <span className="text-red-500">*</span>
@@ -488,7 +479,6 @@ const Salaries = () => {
                 </div>
               </div>
 
-              {/* Net Salary Preview */}
               {formData.basic_salary && (
                 <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200">
                   <p className="text-xs text-purple-600 font-medium uppercase tracking-wider">Net Salary Preview</p>

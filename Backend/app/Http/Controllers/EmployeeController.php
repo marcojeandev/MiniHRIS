@@ -89,6 +89,26 @@ class EmployeeController extends Controller
         }
     }
 
+    public function activeEmployees()
+    {
+        try {
+            $this->authorize('viewAny', Employee::class);
+            $employees = Employee::whereNotIn('employee_status', ['resigned'])
+                ->get();
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Active employees fetched successfully.',
+                'data' => $employees,
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function index(){
         try {
             $this->authorize('viewAny', Employee::class);

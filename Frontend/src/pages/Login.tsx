@@ -21,7 +21,7 @@ const Login = () => {
       navigate('/dashboard')
     } catch (error: any) {
       console.log('Error caught:', error)  // ← Should show in console
-      // const message = error?.response?.data?.message || 'Invalid credentials'
+      const message = error?.response?.data?.message || 'Invalid credentials'
       toast.error(message)  // ← MUST BE HERE
     } finally {
       setLoading(false)

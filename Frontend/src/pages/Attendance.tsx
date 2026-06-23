@@ -60,15 +60,24 @@ const Attendance = () => {
   const [showDropdown, setShowDropdown] = useState(false)
 
   // Fetch employees for dropdown
-  const fetchEmployees = async () => {
-    try {
-      const response = await employeeApi.getAll()
-      const data = response.data?.data || response.data || []
-      setEmployees(Array.isArray(data) ? data : [])
-    } catch (error) {
-      console.error('Failed to load employees:', error)
+ const fetchEmployees = async () => {
+  try {
+    const response = await employeeApi.getAllActive()
+    console.log('Response:', response)  // Debug
+
+    // ✅ Extract data correctly
+    const data = response.data?.data
+    if (Array.isArray(data)) {
+      setEmployees(data)
+    } else {
+      console.warn('Data is not an array:', data)
+      setEmployees([])
     }
+  } catch (error) {
+    console.error('Failed to load employees:', error)
+    setEmployees([])
   }
+}
 
   // Filter employees based on search
   const filteredEmployees = employees.filter(emp =>
