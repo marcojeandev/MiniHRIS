@@ -26,7 +26,7 @@ class EmployeeController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'server error. ' . $e->getMessage()
+                'message' => 'server error. '
             ]);
         }
     }
@@ -84,7 +84,7 @@ class EmployeeController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'server error. ' . $e->getMessage()
+                'message' => 'server error. '
             ]);
         }
     }
@@ -101,7 +101,7 @@ class EmployeeController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'server error. ' . $e->getMessage()
+                'message' => 'server error. '
             ]);
         }
     }

@@ -29,7 +29,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '
             ], 500);
         }
     }
@@ -71,7 +71,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '
             ], 500);
         }
     }
@@ -99,7 +99,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '
             ], 500);
         }
     }
@@ -143,7 +143,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '
             ], 500);
         }
     }
@@ -175,7 +175,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: '
             ], 500);
         }
     }
@@ -216,7 +216,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: ' 
             ], 500);
         }
     }
@@ -266,7 +266,7 @@ class SalaryController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 0,
-                'message' => 'Server error: ' . $e->getMessage()
+                'message' => 'Server error: ' 
             ], 500);
         }
     }
