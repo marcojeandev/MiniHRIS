@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import type { Employee, Payroll, PayrollSummary } from '../types/Payroll'
 import { payrollApi, employeeApi, salaryApi } from '../services/api'
 import toast from 'react-hot-toast'
+
 import {
   Search,
   Plus,
@@ -19,43 +21,6 @@ import {
   Eye
 } from 'lucide-react'
 
-interface Employee {
-  id: number
-  employee_id: string
-  fullname: string
-  email: string
-}
-
-interface Salary {
-  id: number
-  employee_id: string
-  basic_salary: number
-  allowance: number
-  deductions: number
-  net_salary: number
-}
-
-interface Payroll {
-  id: number
-  employee_id: string
-  basic_salary: number
-  allowance: number
-  deductions: number
-  net_salary: number
-  payroll_date: string
-  employee?: {
-    id: number
-    fullname: string
-    employee_id: string
-    email: string
-  }
-}
-
-interface PayrollSummary {
-  total_payroll: number
-  total_employees: number
-  average_salary: number
-}
 
 const Payroll = () => {
   const [payrolls, setPayrolls] = useState<Payroll[]>([])
@@ -102,7 +67,7 @@ const Payroll = () => {
     try {
       const response = await salaryApi.getByEmployee(emp.employee_id)
       const salaryData = response.data?.data || response.data
-      
+
       if (salaryData && salaryData.basic_salary) {
         setFormData(prev => ({
           ...prev,
@@ -125,12 +90,12 @@ const Payroll = () => {
   const fetchData = async () => {
     try {
       setLoading(true)
-      
+
       const [payrollRes, summaryRes] = await Promise.all([
         payrollApi.getAll(),
         payrollApi.getSummary(),
       ])
-      
+
       let payrollData = []
       if (payrollRes.data?.data) {
         payrollData = payrollRes.data.data
@@ -139,16 +104,16 @@ const Payroll = () => {
       } else if (Array.isArray(payrollRes)) {
         payrollData = payrollRes
       }
-      
+
       setPayrolls(payrollData)
-      
+
       let summaryData = null
       if (summaryRes.data?.data) {
         summaryData = summaryRes.data.data
       } else if (summaryRes.data) {
         summaryData = summaryRes.data
       }
-      
+
       setSummary(summaryData)
     } catch (error: any) {
       console.error('Error details:', error)
