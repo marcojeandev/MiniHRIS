@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { EmployeeSalaries, Salary, SalarySummary } from '../types/Salaries'
 import { salaryApi, employeeApi } from '../services/api'
 import toast from 'react-hot-toast'
 import {
@@ -15,41 +16,6 @@ import {
   Wallet,
 } from 'lucide-react'
 
-interface Employee {
-  id: number
-  employee_id: string
-  fullname: string
-  email: string
-}
-
-interface Salary {
-  id: number
-  employee_id: string
-  basic_salary: number
-  allowance: number
-  deductions: number
-  net_salary: number
-  employee?: {
-    id: number
-    fullname: string
-    employee_id: string
-    email: string
-  }
-}
-
-interface SalarySummary {
-  total_employees: number
-  total_payroll: number
-  average_salary: number
-  highest_salary: {
-    employee: string
-    amount: number
-  }
-  lowest_salary: {
-    employee: string
-    amount: number
-  }
-}
 
 const Salaries = () => {
   const [salaries, setSalaries] = useState<Salary[]>([])
@@ -66,7 +32,7 @@ const Salaries = () => {
     deductions: '',
   })
 
-  const [employees, setEmployees] = useState<Employee[]>([])
+  const [employees, setEmployees] = useState<EmployeeSalaries[]>([])
   const [employeeSearch, setEmployeeSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -86,7 +52,7 @@ const Salaries = () => {
     emp.employee_id.toLowerCase().includes(employeeSearch.toLowerCase())
   )
 
-  const selectEmployee = (emp: Employee) => {
+  const selectEmployee = (emp: EmployeeSalaries) => {
     setFormData(prev => ({ ...prev, employee_id: emp.employee_id }))
     setEmployeeSearch(`${emp.fullname} (${emp.employee_id})`)
     setShowDropdown(false)

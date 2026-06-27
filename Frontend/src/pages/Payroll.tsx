@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Employee, Payroll, PayrollSummary } from '../types/Payroll'
+import type { EmployeePayroll, Payroll, PayrollSummary } from '../types/Payroll'
 import { payrollApi, employeeApi, salaryApi } from '../services/api'
 import toast from 'react-hot-toast'
 
@@ -11,14 +11,9 @@ import {
   Printer,
   Users,
   DollarSign,
-  TrendingUp,
-  TrendingDown,
   X,
   Loader2,
   Wallet,
-  Calendar,
-  User,
-  Eye
 } from 'lucide-react'
 
 
@@ -39,7 +34,7 @@ const Payroll = () => {
     payroll_date: new Date().toISOString().split('T')[0],
   })
 
-  const [employees, setEmployees] = useState<Employee[]>([])
+  const [employees, setEmployees] = useState<EmployeePayroll[]>([])
   const [employeeSearch, setEmployeeSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -59,7 +54,7 @@ const Payroll = () => {
     emp.employee_id.toLowerCase().includes(employeeSearch.toLowerCase())
   )
 
-  const selectEmployee = async (emp: Employee) => {
+  const selectEmployee = async (emp: EmployeePayroll) => {
     setFormData(prev => ({ ...prev, employee_id: emp.employee_id }))
     setEmployeeSearch(`${emp.fullname} (${emp.employee_id})`)
     setShowDropdown(false)

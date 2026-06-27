@@ -1,4 +1,4 @@
-export interface Employee {
+export interface EmployeePayroll {
   id: number
   employee_id: string
   fullname: string
@@ -27,7 +27,7 @@ export interface Payroll {
   deductions: number
   net_salary: number
   payroll_date: string
-  employee?: Employee 
+  employee?: EmployeePayroll 
 }
 
 export interface PayrollSummary {

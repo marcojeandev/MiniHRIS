@@ -1,41 +1,19 @@
 import { useEffect, useState } from 'react'
+import type { AttendanceRecord, EmployeeAttendance } from '../types/Attendance'
 import { attendanceApi, employeeApi } from '../services/api'
 import toast from 'react-hot-toast'
 import {
   Search,
   Plus,
   Calendar,
-  Clock,
   UserCheck,
   UserX,
   TrendingUp,
   TrendingDown,
   X,
   Loader2,
-  Filter
 } from 'lucide-react'
 
-interface Employee {
-  id: number
-  employee_id: string
-  fullname: string
-  email: string
-}
-
-interface AttendanceRecord {
-  id: number
-  employee_id: string
-  employee_name: string
-  date: string
-  time_in: string
-  time_out: string
-  attendance_status: 'present' | 'late' | 'absent' | 'leave'
-  employee?: {
-    id: number
-    fullname: string
-    employee_id: string
-  }
-}
 
 const Attendance = () => {
   const [records, setRecords] = useState<AttendanceRecord[]>([])
@@ -55,7 +33,7 @@ const Attendance = () => {
   })
 
   // Employee dropdown state
-  const [employees, setEmployees] = useState<Employee[]>([])
+  const [employees, setEmployees] = useState<EmployeeAttendance[]>([])
   const [employeeSearch, setEmployeeSearch] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -86,7 +64,7 @@ const Attendance = () => {
   )
 
   // Select an employee
-  const selectEmployee = (emp: Employee) => {
+  const selectEmployee = (emp: EmployeeAttendance) => {
     setFormData(prev => ({ ...prev, employee_id: emp.employee_id }))
     setEmployeeSearch(`${emp.fullname} (${emp.employee_id})`)
     setShowDropdown(false)

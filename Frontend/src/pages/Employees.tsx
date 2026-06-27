@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { Employee, SalaryEmployee } from '../types/Employees'
 import { employeeApi, salaryApi } from '../services/api'
 import toast from 'react-hot-toast'
 import { 
@@ -19,30 +20,9 @@ import {
   Building2,
   Calendar,
   DollarSign,
-  Wallet,
-  ArrowLeft
 } from 'lucide-react'
 
-interface Employee {
-  id: number
-  employee_id: string
-  fullname: string
-  email: string
-  contact: string
-  position: string
-  department: string
-  date_hired: string
-  employee_status: 'active' | 'resigned' | 'leave'
-}
 
-interface Salary {
-  id: number
-  employee_id: string
-  basic_salary: number
-  allowance: number
-  deductions: number
-  net_salary: number
-}
 
 const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([])
@@ -66,7 +46,7 @@ const Employees = () => {
   // View modal state
   const [showViewModal, setShowViewModal] = useState(false)
   const [viewingEmployee, setViewingEmployee] = useState<Employee | null>(null)
-  const [viewingSalary, setViewingSalary] = useState<Salary | null>(null)
+  const [viewingSalary, setViewingSalary] = useState<SalaryEmployee | null>(null)
   const [loadingSalary, setLoadingSalary] = useState(false)
 
   // Generate employee ID: EMP-001, EMP-002, etc.

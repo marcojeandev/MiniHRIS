@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { Stats, AttendanceToday, RecentEmployee } from '../types/Dashboard'
 import { 
   Users, 
   UserCheck, 
@@ -14,29 +15,7 @@ import {
 import { dashboardApi } from '../services/api'
 import toast from 'react-hot-toast'
 
-interface Stats {
-  total_employees: number
-  active_employees: number
-  employees_on_leave: number
-  total_monthly_payroll: number
-}
 
-interface AttendanceToday {
-  total: number
-  present: number
-  late: number
-  absent: number
-  leave: number
-}
-
-interface RecentEmployee {
-  id: number
-  employee_id: string
-  fullname: string
-  position: string
-  department: string
-  employee_status: string
-}
 
 const Dashboard = () => {
   const [stats, setStats] = useState<Stats>({
